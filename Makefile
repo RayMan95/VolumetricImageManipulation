@@ -9,8 +9,8 @@ debug:
 	$(CC) -g driver.cpp VolImage.cpp -std=c++11
 	gdb ./a.out
 
-run:
-	./main
+run: default
+	./volimage
 
 clean:
 	rm *.o
