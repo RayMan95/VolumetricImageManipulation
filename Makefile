@@ -15,3 +15,4 @@ run: default
 clean:
 	rm *.o
 	rm volimage
+	rm a.out
