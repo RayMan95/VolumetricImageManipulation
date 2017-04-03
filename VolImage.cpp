@@ -8,6 +8,7 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include <bitset>
 
 using namespace std;
 
@@ -44,7 +45,7 @@ int FKRRAY001::VolImage::volImageSize(){
  */
 bool FKRRAY001::VolImage::readImages(string baseName){
     ifstream ifile;
-//    string filename = ""; // account for new folder / filextension
+//    string filename = ""; // account for new folder + baseName
     ifile.open("./brain_mri_raws/MRI.data"); // TODO delete
     if (ifile.is_open()){
         string width, height, num_images, line;
@@ -57,8 +58,30 @@ bool FKRRAY001::VolImage::readImages(string baseName){
         
         this->width = stoi(width);
         this->height = stoi(height);
+        this->slices.reserve(stoi(num_images));
         
+        // clean streams
+        ss.str(std::string());
+        ifile.close();
         
+        ifile.open("./brain_mri_raws/MRI0.raw", ios::binary);
+        
+        ifile.seekg(0, std::ios_base::end);
+        size_t size = ifile.tellg();
+        ifile.seekg(0, std::ios_base::beg);
+        unsigned char* file_chars[size];
+        
+        unsigned char* start = reinterpret_cast<unsigned char*>(&file_chars);
+        
+        ifile>>noskipws;
+        char c;
+        
+        int i = 0;
+        while (ifile >> c){
+            file_chars[i] = reinterpret_cast<unsigned char*>(c);
+            i++;
+        }
+        this->slices.push_back(&start);
         
         return true;
     }

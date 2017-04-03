@@ -19,7 +19,12 @@ int main(int argc, char **argv){
     else{
         FKRRAY001::VolImage * vim = new FKRRAY001::VolImage();
         string bname = string(argv[2]);
-        vim->readImages(bname);
+        if(vim->readImages(bname)){
+            cout << "File loaded" << endl;
+            
+        }
+        else
+            cout << "File not found" << endl;
     }
     
     cout << "NOP" << endl;
