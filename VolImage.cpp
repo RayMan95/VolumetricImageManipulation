@@ -69,19 +69,21 @@ bool FKRRAY001::VolImage::readImages(string baseName){
         ifile.seekg(0, std::ios_base::end);
         size_t size = ifile.tellg();
         ifile.seekg(0, std::ios_base::beg);
-        unsigned char* file_chars[size];
-        
-        unsigned char* start = reinterpret_cast<unsigned char*>(&file_chars);
+        unsigned char file_chars[size];
         
         ifile>>noskipws;
-        char c;
+        unsigned char c;
         
         int i = 0;
         while (ifile >> c){
-            file_chars[i] = reinterpret_cast<unsigned char*>(c);
+            file_chars[i] = c;
             i++;
         }
-        this->slices.push_back(&start);
+        unsigned char* start = new unsigned char;
+        start = reinterpret_cast<unsigned char*>(&file_chars);
+        unsigned char** start_ptr = new unsigned char*;
+        start_ptr = &start;
+        this->slices.push_back(start_ptr);
         
         return true;
     }
