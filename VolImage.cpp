@@ -51,17 +51,18 @@ bool FKRRAY001::VolImage::readImages(string baseName){
         string width, height, num_images, line;
         getline(ifile, line);
         // extract sections of string
-        stringstream ss(line);
+        istringstream ss(line);
         getline(ss,width,' ');
         getline(ss,height,' ');
         getline(ss,num_images,' ');
+        ss.str(std::string());
+
         
         this->width = stoi(width);
         this->height = stoi(height);
         this->slices.reserve(stoi(num_images));
         
         // clean streams
-        ss.str(std::string());
         ifile.close();
         
         ifile.open("./brain_mri_raws/MRI0.raw", ios::binary);
@@ -79,13 +80,18 @@ bool FKRRAY001::VolImage::readImages(string baseName){
             file_chars[i] = c;
             i++;
         }
+        ifile.close();
         unsigned char* start = new unsigned char;
         start = reinterpret_cast<unsigned char*>(&file_chars);
         unsigned char** start_ptr = new unsigned char*;
         start_ptr = &start;
         this->slices.push_back(start_ptr);
-        
+
         return true;
     }
     return false;
 }
+
+//void FKRRAY001::VolImage::dump(){
+//    cout << *slices[0] << endl;
+//}
