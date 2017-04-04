@@ -65,33 +65,51 @@ bool FKRRAY001::VolImage::readImages(string baseName){
         // clean streams
         ifile.close();
         
-        ifile.open("./brain_mri_raws/MRI0.raw", ios::binary);
         
-        ifile.seekg(0, std::ios_base::end);
-        size_t size = ifile.tellg();
-        ifile.seekg(0, std::ios_base::beg);
-        unsigned char file_chars[size];
-        
-        ifile>>noskipws;
-        unsigned char c;
+        unsigned char* start = new unsigned char;
+        unsigned char** start_ptr = new unsigned char*;
         
         int i = 0;
-        while (ifile >> c){
-            file_chars[i] = c;
+        while (i < stoi(num_images)){
+            ifile.open("./brain_mri_raws/MRI" + to_string(i) + ".raw", ios::binary);
+        
+            ifile.seekg(0, std::ios_base::end);
+            size_t size = ifile.tellg();
+            ifile.seekg(0, std::ios_base::beg);
+            unsigned char file_chars[size];
+
+            ifile>>noskipws;
+            unsigned char c;
+
+            int j = 0;
+            while (ifile >> c){
+                file_chars[j] = c;
+                j++;
+            }
+            ifile.close();
+            
+            start = reinterpret_cast<unsigned char*>(&file_chars);
+            
+            start_ptr = &start;
+            this->slices.push_back(start_ptr);
+            
             i++;
         }
-        ifile.close();
-        unsigned char* start = new unsigned char;
-        start = reinterpret_cast<unsigned char*>(&file_chars);
-        unsigned char** start_ptr = new unsigned char*;
-        start_ptr = &start;
-        this->slices.push_back(start_ptr);
+        
 
         return true;
     }
     return false;
 }
 
-//void FKRRAY001::VolImage::dump(){
-//    cout << *slices[0] << endl;
-//}
+void extract(int sliceId, string output_prefix){
+    
+}
+
+void FKRRAY001::VolImage::dump(){
+    int i = 0;
+    while (i < 123){
+        cout << *slices[i] << endl;
+        i++;
+    }
+}

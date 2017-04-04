@@ -26,7 +26,7 @@ namespace FKRRAY001{
         // extract slice sliceId and write to output - define in .cpp
         void extract(int sliceId, std::string output_prefix);
         int volImageSize(void);
-//        void dump(void);
+        void dump(void);
     };
 }
 
