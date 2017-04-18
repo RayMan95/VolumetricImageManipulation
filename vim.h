@@ -14,7 +14,7 @@ namespace FKRRAY001{
     
     class VolImage{
     private:
-        int width, height; // width and height of image stack
+        int width, height, num_imgs; // width and height of image stack
         std::vector<unsigned char**> slices; // data for each slice, in order
     public:
         VolImage(); // default constructor - define in .cpp

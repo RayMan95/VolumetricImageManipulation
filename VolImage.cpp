@@ -12,7 +12,7 @@
 
 using namespace std;
 
-int width, height; // width and height of image stack
+int width, height, num_imgs; // width and height of image stack
 vector<unsigned char**> slices; // data for each slice, in order
 
 /**
@@ -27,7 +27,13 @@ FKRRAY001::VolImage::VolImage(){
  * 
  */
 FKRRAY001::VolImage::~VolImage(){
-    // NOP (I think))
+    int i = 0;
+    while (i < this->height){
+        delete [] this->slices[0][i];
+        i++;
+    }
+    delete [] slices[0];
+    
 }
 
 /**
@@ -60,7 +66,8 @@ bool FKRRAY001::VolImage::readImages(string baseName){
         
         this->width = stoi(width);
         this->height = stoi(height);
-        this->slices.reserve(stoi(num_images));
+        this->num_imgs = stoi(num_images);
+        this->slices.reserve(num_imgs);
         
         // clean streams
         ifile.close();
@@ -70,31 +77,35 @@ bool FKRRAY001::VolImage::readImages(string baseName){
         unsigned char** start_ptr = new unsigned char*;
         
         int i = 0;
-        while (i < stoi(num_images)){
-            ifile.open("./brain_mri_raws/MRI" + to_string(i) + ".raw", ios::binary);
+         while (i < num_imgs){ // each image
+            ifile.open("./brain_mri_raws/MRI" + to_string(i) + ".raw", ios::binary); // hardcoded
         
             ifile.seekg(0, std::ios_base::end);
-            size_t size = ifile.tellg();
+            size_t size = ifile.tellg(); // file size
             ifile.seekg(0, std::ios_base::beg);
-            unsigned char file_chars[size];
 
             ifile>>noskipws;
             unsigned char c;
 
+            
             int j = 0;
-            while (ifile >> c){
-                file_chars[j] = c;
+            while (j < this->height){ // each row
+            	unsigned char * line_chars = new unsigned char[this->width];
+            	int k = 0;
+            	while (k < this->width){ // each column
+                    ifile >> c;
+                    line_chars[k] = c;
+                    k++;	
+            	}
+            	if (j == 0) // first row
+                    start = reinterpret_cast<unsigned char*>(line_chars);
                 j++;
             }
             ifile.close();
-            
-            start = reinterpret_cast<unsigned char*>(&file_chars);
-            
-            start_ptr = &start;
+            start_ptr = &start; // right?
             this->slices.push_back(start_ptr);
-            
             i++;
-        }
+         }
         
 
         return true;
@@ -108,7 +119,7 @@ void extract(int sliceId, string output_prefix){
 
 void FKRRAY001::VolImage::dump(){
     int i = 0;
-    while (i < 123){
+    while (i < this->num_imgs){
         cout << *slices[i] << endl;
         i++;
     }
