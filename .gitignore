@@ -3,3 +3,5 @@
 /nbproject
 *.pdf
 *.out
+*.raw
+*.dat

@@ -27,13 +27,14 @@ FKRRAY001::VolImage::VolImage(){
  * 
  */
 FKRRAY001::VolImage::~VolImage(){
-    int i = 0;
-    while (i < this->height){
-        delete [] this->slices[0][i];
-        i++;
+    for (auto p : this->slices){
+        int i = 0;
+        while (i < this->height){
+            delete [] p[i];
+            i++;
+        }
+        delete [] p;
     }
-    delete [] slices[0];
-    
 }
 
 /**
@@ -86,7 +87,6 @@ bool FKRRAY001::VolImage::readImages(string baseName){
 
             ifile>>noskipws;
             unsigned char c;
-
             
             int j = 0;
             while (j < this->height){ // each row
@@ -106,21 +106,46 @@ bool FKRRAY001::VolImage::readImages(string baseName){
             this->slices.push_back(start_ptr);
             i++;
          }
-        
-
         return true;
     }
     return false;
 }
 
-void extract(int sliceId, string output_prefix){
+void FKRRAY001::VolImage::extract(int sliceId, string output_prefix){
+    ofstream ofile;
+    ofile.open("output.dat"); // header file
+    string s = to_string(this->width) + " " + to_string(this->height) + " 1";
+    ofile << s << endl;
+    ofile.close();
     
+    ofile.open("output.raw", ios::binary); // output raw file
+    int i = 0;
+    while (i < this->height){ // each row
+        int j = 0;
+        while (j < this->width){ // each column
+            ofile << this->slices[sliceId][i][j];
+            j++;
+        }
+        ofile << endl;
+        i++;
+    }
+    ofile.close();
 }
 
 void FKRRAY001::VolImage::dump(){
     int i = 0;
-    while (i < this->num_imgs){
-        cout << *slices[i] << endl;
+//    while (i < this->num_imgs){
+        int j = 0;
+        while (j < this->height){
+            int k =0;
+            while (k < this->width){
+                cout << this->slices[i][j][k];
+                k++;
+            }
+            cout << endl;
+            j++;
+        }
+        cout << endl;        
         i++;
-    }
+//    }
 }

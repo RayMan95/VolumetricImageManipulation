@@ -20,7 +20,8 @@ int main(int argc, char **argv){
         FKRRAY001::VolImage * vim = new FKRRAY001::VolImage();
         string bname = string(argv[2]);
         if(vim->readImages(bname)){
-            vim->dump();
+//            vim->dump();
+            vim->extract(0,"raw");
             cout << "File loaded" << endl;
             
         }
