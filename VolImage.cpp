@@ -5,10 +5,9 @@
  */
 
 #include "vim.h"
-#include <fstream>
 #include <sstream>
-#include <iostream>
 #include <bitset>
+#include <math.h>
 
 using namespace std;
 
@@ -53,7 +52,8 @@ int FKRRAY001::VolImage::volImageSize(){
 bool FKRRAY001::VolImage::readImages(string baseName){
     ifstream ifile;
 //    string filename = ""; // account for new folder + baseName
-    ifile.open("./brain_mri_raws/MRI.data"); // TODO delete
+//    ifile.open("./brain_mri_raws/MRI.data"); // TODO delete
+    ifile.open(baseName+".dat");
     if (ifile.is_open()){
         string width, height, num_images, line;
         getline(ifile, line);
@@ -70,22 +70,22 @@ bool FKRRAY001::VolImage::readImages(string baseName){
         this->num_imgs = stoi(num_images);
         this->slices.reserve(num_imgs);
         
-        // clean streams
         ifile.close();
-        
-        
-        unsigned char* start = new unsigned char;
-        unsigned char** start_ptr = new unsigned char*;
         
         int i = 0;
          while (i < num_imgs){ // each image
-            ifile.open("./brain_mri_raws/MRI" + to_string(i) + ".raw", ios::binary); // hardcoded
+//            ifile.open("./brain_mri_raws/MRI" + to_string(i) + ".raw", ios::binary);
+            ifile.open(baseName + to_string(i) + ".raw", ios::binary);
         
-            ifile.seekg(0, std::ios_base::end);
+            ifile.seekg(0, ios_base::end);
             size_t size = ifile.tellg(); // file size
-            ifile.seekg(0, std::ios_base::beg);
+            ifile.seekg(0, ios_base::beg);
+            
+//            char * charBlock = new char[size]; TODO: possibly use
 
             ifile>>noskipws;
+            
+            unsigned char ** rows = new unsigned char * [this->height];
             unsigned char c;
             
             int j = 0;
@@ -95,15 +95,13 @@ bool FKRRAY001::VolImage::readImages(string baseName){
             	while (k < this->width){ // each column
                     ifile >> c;
                     line_chars[k] = c;
-                    k++;	
+                    k++;
             	}
-            	if (j == 0) // first row
-                    start = reinterpret_cast<unsigned char*>(line_chars);
+                rows[j] = line_chars;
                 j++;
             }
             ifile.close();
-            start_ptr = &start; // right?
-            this->slices.push_back(start_ptr);
+            this->slices.push_back(rows);
             i++;
          }
         return true;
@@ -113,7 +111,7 @@ bool FKRRAY001::VolImage::readImages(string baseName){
 
 void FKRRAY001::VolImage::extract(int sliceId, string output_prefix){
     ofstream ofile;
-    ofile.open("output.dat"); // header file
+    ofile.open(output_prefix + ".dat"); // header file
     string s = to_string(this->width) + " " + to_string(this->height) + " 1";
     ofile << s << endl;
     ofile.close();
@@ -126,26 +124,26 @@ void FKRRAY001::VolImage::extract(int sliceId, string output_prefix){
             ofile << this->slices[sliceId][i][j];
             j++;
         }
-        ofile << endl;
         i++;
     }
     ofile.close();
 }
 
-void FKRRAY001::VolImage::dump(){
-    int i = 0;
-//    while (i < this->num_imgs){
-        int j = 0;
-        while (j < this->height){
-            int k =0;
-            while (k < this->width){
-                cout << this->slices[i][j][k];
-                k++;
+void FKRRAY001::VolImage::diffmap(int sliceI, int sliceJ, std::string output_prefix){
+    ofstream ofile;
+    ofile.open(output_prefix + ".raw"); // output file + ext?
+        
+    if (this->width != 0 && this->height != 0){
+        int i = 0;
+        while (i < height){
+            int j = 0;
+            while (j < width){
+                ofile << (unsigned char)(fabs((float)slices[sliceI][i][j] - (float)slices[sliceJ][i][j])/2);
+                j++;
             }
-            cout << endl;
-            j++;
+            i++;
         }
-        cout << endl;        
-        i++;
-//    }
+    }
+    
+    ofile.close();
 }

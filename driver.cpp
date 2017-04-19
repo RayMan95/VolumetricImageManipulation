@@ -18,18 +18,13 @@ int main(int argc, char **argv){
     }
     else{
         FKRRAY001::VolImage * vim = new FKRRAY001::VolImage();
-        string bname = string(argv[2]);
+        string bname(argv[1]);
         if(vim->readImages(bname)){
-//            vim->dump();
-            vim->extract(0,"raw");
-            cout << "File loaded" << endl;
+            cout << "File loaded successfully" << endl;
             
         }
         else
-            cout << "File not found" << endl;
+            cout << "File load failed" << endl;
     }
-    
-    cout << "NOP" << endl;
-
     return 0;
 }

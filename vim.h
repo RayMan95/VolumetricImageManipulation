@@ -10,6 +10,7 @@
 #include <vector>
 #include <string>
 #include <cstring>
+#include <fstream>
 namespace FKRRAY001{
     
     class VolImage{
@@ -26,7 +27,6 @@ namespace FKRRAY001{
         // extract slice sliceId and write to output - define in .cpp
         void extract(int sliceId, std::string output_prefix);
         int volImageSize(void);
-        void dump(void);
     };
 }
 
