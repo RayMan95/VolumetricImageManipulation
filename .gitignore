@@ -1,5 +1,5 @@
 *.o
-/volimage
+/volImage
 /nbproject
 *.pdf
 *.out

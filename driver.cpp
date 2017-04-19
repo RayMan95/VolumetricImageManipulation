@@ -21,6 +21,7 @@ int main(int argc, char **argv){
         string bname(argv[1]);
         if(vim->readImages(bname)){
             cout << "File loaded successfully" << endl;
+            delete vim;
             
         }
         else

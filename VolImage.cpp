@@ -32,8 +32,9 @@ FKRRAY001::VolImage::~VolImage(){
             delete [] p[i];
             i++;
         }
-        delete [] p;
+        delete[] p;
     }
+    slices.clear();
 }
 
 /**
@@ -80,8 +81,6 @@ bool FKRRAY001::VolImage::readImages(string baseName){
             ifile.seekg(0, ios_base::end);
             size_t size = ifile.tellg(); // file size
             ifile.seekg(0, ios_base::beg);
-            
-//            char * charBlock = new char[size]; TODO: possibly use
 
             ifile>>noskipws;
             
