@@ -6,7 +6,6 @@
 
 #include "vim.h"
 #include <sstream>
-#include <bitset>
 #include <math.h>
 
 using namespace std;
@@ -43,8 +42,16 @@ FKRRAY001::VolImage::~VolImage(){
  * @return number of bytes uses to store image, data bytes and pointers 
  */
 int FKRRAY001::VolImage::volImageSize(){
-    // TODO
-    return 1;
+    if ((this->width > 0) and (this->height > 0)){ // not empty
+//        int x = slices.size();
+        
+        return (slices.size()*(this->height)*(this->width)) + (sizeof(int*)*slices.size());
+    }
+    return 0;
+}
+
+int FKRRAY001::VolImage::volNumImages(void){
+    return this->num_imgs;
 }
 
 /** 
@@ -52,8 +59,6 @@ int FKRRAY001::VolImage::volImageSize(){
  */
 bool FKRRAY001::VolImage::readImages(string baseName){
     ifstream ifile;
-//    string filename = ""; // account for new folder + baseName
-//    ifile.open("./brain_mri_raws/MRI.data"); // TODO delete
     ifile.open(baseName+".dat");
     if (ifile.is_open()){
         string width, height, num_images, line;
@@ -77,10 +82,6 @@ bool FKRRAY001::VolImage::readImages(string baseName){
          while (i < num_imgs){ // each image
 //            ifile.open("./brain_mri_raws/MRI" + to_string(i) + ".raw", ios::binary);
             ifile.open(baseName + to_string(i) + ".raw", ios::binary);
-        
-            ifile.seekg(0, ios_base::end);
-            size_t size = ifile.tellg(); // file size
-            ifile.seekg(0, ios_base::beg);
 
             ifile>>noskipws;
             
@@ -115,7 +116,7 @@ void FKRRAY001::VolImage::extract(int sliceId, string output_prefix){
     ofile << s << endl;
     ofile.close();
     
-    ofile.open("output.raw", ios::binary); // output raw file
+    ofile.open(output_prefix +".raw", ios::binary); // output raw file
     int i = 0;
     while (i < this->height){ // each row
         int j = 0;
@@ -128,7 +129,7 @@ void FKRRAY001::VolImage::extract(int sliceId, string output_prefix){
     ofile.close();
 }
 
-void FKRRAY001::VolImage::diffmap(int sliceI, int sliceJ, std::string output_prefix){
+void FKRRAY001::VolImage::diffmap(int sliceI, int sliceJ, string output_prefix){
     ofstream ofile;
     ofile.open(output_prefix + ".raw"); // output file + ext?
         

@@ -26,6 +26,7 @@ namespace FKRRAY001{
         void diffmap(int sliceI, int sliceJ, std::string output_prefix);
         // extract slice sliceId and write to output - define in .cpp
         void extract(int sliceId, std::string output_prefix);
+        int volNumImages(void);
         int volImageSize(void);
     };
 }

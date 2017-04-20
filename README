@@ -1,5 +1,26 @@
 Rayaan Fakier FKRRAY001
 CSC3022H Assignment 2 README
--------------------------------------------------------------
+------------------------------------------------------------------------------------------
 1. Project Structure
-* 
+* vim.h:
+	- Header file for project
+
+* driver.cpp:
+	- Contains main method
+	- Creates and deletes a single VolImage object
+	- Handles using console input to perform expected operations on VolImage object
+
+* VolImage.cpp
+	- Class for volumetric image manipulation objects
+	- Contains all methods required to perform expected operations (as stipulated by Assignment outline)
+	- Handles file I/O as well as handling (allocation and deletion) of pointers
+
+2. Running Project
+	1) Direct terminal to directory containing project files (driver.cpp, VolImage.cpp & vim.h)
+	2) Run command: volimage <imageBase> [-d i j output_file_name] [-x i output_file_name]
+	(where <imageBase> is the prefix for the file sequence).
+	2.1) Optional: -d i j output_file_name: compute a difference map between images i and j, and write this out to file.
+	2.2) Optional: -x i output file name: extract and write the slice with number i and write this out to file.
+	2.3) NB: only one of [-d|-x] commands can be done at one time.
+	2.4) NB: relative paths must be provided for files
+
